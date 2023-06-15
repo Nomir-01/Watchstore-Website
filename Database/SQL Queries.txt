@@ -1,0 +1,165 @@
+CREATE TABLE [dbo].[admin](
+	[adminId] [int] IDENTITY(1,1) NOT NULL,
+	[fullName] [nvarchar](100) NOT NULL,
+	[username] [nvarchar](50) NOT NULL,
+	[password] [nvarchar](50) NOT NULL,
+	[role] [nvarchar](10) NOT NULL,
+ CONSTRAINT [PK_admin] PRIMARY KEY CLUSTERED 
+(
+	[adminId] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[cart]    Script Date: 5/14/2022 10:24:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[cart](
+	[cartId] [int] IDENTITY(1,1) NOT NULL,
+	[fk_customerId] [int] NOT NULL,
+	[fk_productId] [int] NOT NULL,
+	[qty] [int] NOT NULL,
+	[totalPrice] [float] NOT NULL,
+ CONSTRAINT [PK_cart] PRIMARY KEY CLUSTERED 
+(
+	[cartId] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[categories]    Script Date: 5/14/2022 10:24:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[categories](
+	[categoryId] [int] IDENTITY(1,1) NOT NULL,
+	[categoryName] [nvarchar](70) NOT NULL,
+ CONSTRAINT [PK_categories] PRIMARY KEY CLUSTERED 
+(
+	[categoryId] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[customers]    Script Date: 5/14/2022 10:24:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[customers](
+	[customerId] [int] IDENTITY(1,1) NOT NULL,
+	[customerName] [nvarchar](100) NOT NULL,
+	[customerEmail] [nvarchar](60) NOT NULL,
+	[customerPhone] [nvarchar](24) NOT NULL,
+	[customerPassword] [nvarchar](60) NOT NULL,
+	[customerAddress] [nvarchar](max) NOT NULL,
+	[role] [nvarchar](10) NOT NULL,
+ CONSTRAINT [PK_customers] PRIMARY KEY CLUSTERED 
+(
+	[customerId] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[order_details]    Script Date: 5/14/2022 10:24:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[order_details](
+	[orderDetail_Id] [int] IDENTITY(1,1) NOT NULL,
+	[fk_orderId] [int] NOT NULL,
+	[fk_productId] [int] NOT NULL,
+	[qty] [int] NOT NULL,
+	[price] [float] NOT NULL,
+ CONSTRAINT [PK_order_details] PRIMARY KEY CLUSTERED 
+(
+	[orderDetail_Id] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[orders]    Script Date: 5/14/2022 10:24:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[orders](
+	[orderId] [int] IDENTITY(1,1) NOT NULL,
+	[fk_customerId] [int] NOT NULL,
+	[totalPrice] [float] NOT NULL,
+	[orderDate] [nvarchar](50) NOT NULL,
+	[fullName] [nvarchar](100) NOT NULL,
+	[phoneNumber] [nvarchar](24) NOT NULL,
+	[addressDetail] [nvarchar](max) NOT NULL,
+	[orderStatus] [int] NOT NULL,
+ CONSTRAINT [PK_orders] PRIMARY KEY CLUSTERED 
+(
+	[orderId] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[products]    Script Date: 5/14/2022 10:24:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[products](
+	[productId] [int] IDENTITY(1,1) NOT NULL,
+	[fk_categoryId] [int] NOT NULL,
+	[productName] [nvarchar](max) NOT NULL,
+	[productPrice] [float] NOT NULL,
+	[productQty] [int] NOT NULL,
+	[productImage] [nvarchar](max) NOT NULL,
+	[productDesc] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_products] PRIMARY KEY CLUSTERED 
+(
+	[productId] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[cart]  WITH CHECK ADD  CONSTRAINT [FK_CustomerId_Cart] FOREIGN KEY([fk_customerId])
+REFERENCES [dbo].[customers] ([customerId])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+
+GO
+ALTER TABLE [dbo].[cart] CHECK CONSTRAINT [FK_CustomerId_Cart]
+GO
+ALTER TABLE [dbo].[cart]  WITH CHECK ADD  CONSTRAINT [FK_ProductId_Cart] FOREIGN KEY([fk_productId])
+REFERENCES [dbo].[products] ([productId])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[cart] CHECK CONSTRAINT [FK_ProductId_Cart]
+GO
+ALTER TABLE [dbo].[order_details]  WITH CHECK ADD  CONSTRAINT [FK_OrderId_Order_Details] FOREIGN KEY([fk_orderId])
+REFERENCES [dbo].[orders] ([orderId])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[order_details] CHECK CONSTRAINT [FK_OrderId_Order_Details]
+GO
+ALTER TABLE [dbo].[order_details]  WITH CHECK ADD  CONSTRAINT [FK_ProdutId_Products] FOREIGN KEY([fk_productId])
+REFERENCES [dbo].[products] ([productId])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[order_details] CHECK CONSTRAINT [FK_ProdutId_Products]
+GO
+ALTER TABLE [dbo].[orders]  WITH CHECK ADD  CONSTRAINT [FK_CustomerId_Orders] FOREIGN KEY([fk_customerId])
+REFERENCES [dbo].[customers] ([customerId])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[orders] CHECK CONSTRAINT [FK_CustomerId_Orders]
+GO
+ALTER TABLE [dbo].[products]  WITH CHECK ADD  CONSTRAINT [FK_CategoryId_Products] FOREIGN KEY([fk_categoryId])
+REFERENCES [dbo].[categories] ([categoryId])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[products] CHECK CONSTRAINT [FK_CategoryId_Products]
+GO
+ALTER DATABASE [WatchStore] SET  READ_WRITE 
+GO
+
+$ git clone https://github.com/naeem-abbas/WatchStore.git
